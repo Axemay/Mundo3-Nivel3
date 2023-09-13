@@ -24,7 +24,7 @@ public class PessoaJuridicaDAO {
         this.conectorBD = new ConectorBD();
     }
 
-    // Método para obter uma PessoaJuridica pelo ID
+
     public PessoaJuridica getPessoaJuridica(int id) {
         PessoaJuridica pessoaJuridica = null;
         Connection connection = null;
@@ -34,7 +34,6 @@ public class PessoaJuridicaDAO {
         try {
             connection = conectorBD.getConnection();
             
-            // Consultar a tabela PessoaJuridica
             String sql = "SELECT * FROM PessoaJuridica WHERE idPessoa = ?";
             statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
@@ -45,10 +44,10 @@ public class PessoaJuridicaDAO {
                 pessoaJuridica.setId(resultSet.getInt("idPessoa"));
                 pessoaJuridica.setNome(resultSet.getString("nome"));
                 pessoaJuridica.setCnpj(resultSet.getString("CNPJ"));
-                // Definir outros atributos específicos da tabela PessoaJuridica, se houver
+
             }
         } catch (SQLException e) {
-            // Tratar exceção, se necessário
+
         } finally {
             conectorBD.close(resultSet);
             conectorBD.close(statement);
@@ -58,7 +57,6 @@ public class PessoaJuridicaDAO {
         return pessoaJuridica;
     }
     
-    // Método para listar todas as pessoas jurídicas
     public List<PessoaJuridica> listarTodasPessoasJuridicas() {
         List<PessoaJuridica> pessoasJuridicas = new ArrayList<>();
         Connection connection = null;
@@ -68,7 +66,6 @@ public class PessoaJuridicaDAO {
         try {
              connection = conectorBD.getConnection();
             
-            // Consultar a tabela Pessoa
             String sql = "SELECT * FROM Pessoa RIGHT JOIN PessoaJuridica ON Pessoa.idPessoa = PessoaJuridica.idPessoa";
             statement = connection.prepareStatement(sql);
             resultSet = statement.executeQuery();
@@ -97,14 +94,13 @@ public class PessoaJuridicaDAO {
     return pessoasJuridicas;
 }
     
-    // Método para incluir uma PessoaJuridica no banco de dados
     public void incluirPessoaJuridica(PessoaJuridica pessoaJuridica) {
         Connection connection = null;
         PreparedStatement statement = null;
 
         try {
             connection = conectorBD.getConnection();
-            connection.setAutoCommit(false); // Inicia uma transação
+            connection.setAutoCommit(false); 
 
                            // Inserir na tabela Pessoa
         String sqlPessoa = "INSERT INTO Pessoa (nome, logradouro, cidade, estado, telefone, email) VALUES (?, ?, ?, ?, ?, ?)";
@@ -117,7 +113,6 @@ public class PessoaJuridicaDAO {
         statement.setString(6, pessoaJuridica.getEmail());
         statement.executeUpdate();
 
-        // Obter o ID gerado para a Pessoa
         ResultSet generatedKeys = statement.getGeneratedKeys();
         int idPessoa;
         if (generatedKeys.next()) {
@@ -130,11 +125,11 @@ public class PessoaJuridicaDAO {
             statement.setString(2, pessoaJuridica.getCnpj());
             statement.executeUpdate();
 
-            connection.commit(); // Confirma a transação
+            connection.commit(); 
         } catch (SQLException e) {
             if (connection != null) {
                 try {
-                    connection.rollback(); // Desfaz a transação em caso de erro
+                    connection.rollback(); 
                 } catch (SQLException ex) {
                 }
             }
@@ -144,23 +139,22 @@ public class PessoaJuridicaDAO {
         }
     }
     
-    // Método para alterar uma PessoaJuridica no banco de dados
     public void alterarPessoaJuridica(PessoaJuridica pessoaJuridica) {
         Connection connection = null;
         PreparedStatement statement = null;
 
         try {
             connection = conectorBD.getConnection();
-            connection.setAutoCommit(false); // Inicia uma transação
+            connection.setAutoCommit(false); 
 
-            // Verifica se a PessoaJuridica existe no banco de dados
+
             String sqlVerificarExistencia = "SELECT idPessoa FROM PessoaJuridica WHERE idPessoa = ?";
             statement = connection.prepareStatement(sqlVerificarExistencia);
             statement.setInt(1, pessoaJuridica.getId());
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                // Atualizar tabela PessoaJuridica
+
                 String sql = "UPDATE PessoaJuridica SET nome = ?, CNPJ = ? WHERE idPessoa = ?";
                 statement = connection.prepareStatement(sql);
                 statement.setString(1, pessoaJuridica.getNome());
@@ -168,14 +162,14 @@ public class PessoaJuridicaDAO {
                 statement.setInt(3, pessoaJuridica.getId());
                 statement.executeUpdate();
 
-                connection.commit(); // Confirma a transação
+                connection.commit(); 
             } else {
                 System.out.println("A PessoaJuridica com o ID especificado não existe no banco de dados.");
             }
         } catch (SQLException e) {
             if (connection != null) {
                 try {
-                    connection.rollback(); // Desfaz a transação em caso de erro
+                    connection.rollback(); 
                 } catch (SQLException ex) {
                 }
             }
@@ -185,7 +179,6 @@ public class PessoaJuridicaDAO {
         }
     }
     
-    // Método para obter uma PessoaJuridica pelo ID
 public PessoaJuridica getPessoaJuridicaById(int id) {
     PessoaJuridica pessoaJuridica = null;
     Connection connection = null;
@@ -195,7 +188,6 @@ public PessoaJuridica getPessoaJuridicaById(int id) {
     try {
         connection = conectorBD.getConnection();
         
-        // Consultar a tabela PessoaJuridica
         String sql = "SELECT * FROM Pessoa RIGHT JOIN PessoaJuridica ON Pessoa.idPessoa = PessoaJuridica.idPessoa WHERE Pessoa.idPessoa = ?";
         statement = connection.prepareStatement(sql);
         statement.setInt(1, id);
@@ -216,7 +208,7 @@ public PessoaJuridica getPessoaJuridicaById(int id) {
             
         }
     } catch (SQLException e) {
-        // Tratar exceção, se necessário
+
     } finally {
         conectorBD.close(resultSet);
         conectorBD.close(statement);
@@ -227,29 +219,26 @@ public PessoaJuridica getPessoaJuridicaById(int id) {
 }
 
     
-    // Método para excluir uma PessoaJuridica do banco de dados
     public void excluirPessoaJuridica(int id) {
         Connection connection = null;
         PreparedStatement statement = null;
 
         try {
             connection = conectorBD.getConnection();
-            connection.setAutoCommit(false); // Inicia uma transação
+            connection.setAutoCommit(false); 
 
-            // Verificar se a PessoaJuridica existe no banco de dados
             String sqlVerificarExistencia = "SELECT idPessoa FROM PessoaJuridica WHERE idPessoa = ?";
             statement = connection.prepareStatement(sqlVerificarExistencia);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                // Excluir da tabela PessoaJuridica
                 String sql = "DELETE FROM PessoaJuridica WHERE idPessoa = ?";
                 statement = connection.prepareStatement(sql);
                 statement.setInt(1, id);
                 statement.executeUpdate();
 
-                connection.commit(); // Confirma a transação
+                connection.commit(); 
                 System.out.println("Pessoa jurídica excluída com sucesso.");
             } else {
                 System.out.println("A pessoa com o ID especificado não foi encontrada.");
@@ -257,7 +246,7 @@ public PessoaJuridica getPessoaJuridicaById(int id) {
         } catch (SQLException e) {
             if (connection != null) {
                 try {
-                    connection.rollback(); // Desfaz a transação em caso de erro
+                    connection.rollback(); 
                 } catch (SQLException ex) {
                 }
             }

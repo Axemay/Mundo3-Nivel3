@@ -73,6 +73,6 @@ public class ConectorBD {
     }
 
     Statement getStatement() {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Sem suporte!"); 
     }
 }

@@ -29,27 +29,27 @@ public class CadastroBDTeste {
 
                 switch (opcao) {
                     case "1":    
-                                CadastroBDService.realizarInclusao
+                                CadastroBDService.executarIncluir
                                 (scanner, pessoaFisicaDAO, pessoaJuridicaDAO);
                     break;
                     
                     case "2": 
-                                CadastroBDService.realizarAlteracao
+                                CadastroBDService.executarAlterar
                                 (scanner, pessoaFisicaDAO, pessoaJuridicaDAO);
                     break;
                     
                     case "3": 
-                                CadastroBDService.realizarExclusao
+                                CadastroBDService.executarExcluir
                                 (scanner, pessoaFisicaDAO, pessoaJuridicaDAO);
                     break;
                     
                     case "4":
-                                CadastroBDService.realizarObtencaoPorID
+                                CadastroBDService.executarObterID
                                 (scanner, pessoaFisicaDAO, pessoaJuridicaDAO);
                     break;
                     
                     case "5": 
-                                CadastroBDService.realizarListagem
+                                CadastroBDService.executarListar
                                 (scanner, pessoaFisicaDAO, pessoaJuridicaDAO);
                     break;
                     
@@ -58,7 +58,7 @@ public class CadastroBDTeste {
                     break;
                     
                     default: System.out.println("Opção inválida. Tente novamente.");
-                    
+                    break;
                     }
             }
         }
