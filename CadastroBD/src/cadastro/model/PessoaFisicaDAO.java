@@ -236,6 +236,7 @@ public class PessoaFisicaDAO {
         }
     }
     
+    // Opção 4 do Menu
     public PessoaFisica getPessoaFisicaById(int id) {
     PessoaFisica pessoaFisica = null;
     Connection connection = null;

@@ -119,23 +119,25 @@ public class CadastroBDService {
     // Método para listar todas as pessoas físicas cadastradas no banco de dados
     public static void realizarListagem(Scanner scanner, PessoaFisicaDAO pessoaFisicaDAO, PessoaJuridicaDAO pessoaJuridicaDAO) {
     String tipoListagem = selecionarTipo(scanner);
+    scanner.nextLine(); // Limpar o buffer do scanner
     if (tipoListagem.equalsIgnoreCase("F")) {
         List<PessoaFisica> pessoasFisicas = pessoaFisicaDAO.listarTodasPessoasFisicas();
         System.out.println("Lista de Pessoas Físicas");
-        System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        System.out.println("====================================");
 
         for (PessoaFisica pessoaFisica : pessoasFisicas) {
             pessoaFisica.exibir();
-            System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+            System.out.println("====================================");
         }
     } else if (tipoListagem.equalsIgnoreCase("J")) {
         List<PessoaJuridica> pessoasJuridicas = pessoaJuridicaDAO.listarTodasPessoasJuridicas();
                 System.out.println("Lista de Pessoas Jurídicas");
-        System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        System.out.println("====================================");
         for (PessoaJuridica pessoaJuridica : pessoasJuridicas) {
             pessoaJuridica.exibir();
-            System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+            System.out.println("====================================");
         }
+        
     }
 }
 
@@ -342,12 +344,13 @@ public static void listarPessoasFisicas(PessoaFisicaDAO pessoaFisicaDAO) {
 
    // Exibe os dados de uma pessoa física com base no ID fornecido
     public static void exibirPessoaFisicaPorID(Scanner scanner, PessoaFisicaDAO pessoaFisicaDAO) {
-        System.out.println("Digite o ID da pessoa Física a ser exibida:");
+        System.out.println("Digite o ID da pessoa Física para exibição:");
         int id_Pessoa = scanner.nextInt();
         scanner.nextLine(); // Limpar o buffer do scanner
 
         PessoaFisica pessoaFisica = pessoaFisicaDAO.getPessoaFisicaById(id_Pessoa);
         if (pessoaFisica != null) {
+            System.out.println("====================================");
             pessoaFisica.exibir();
             
         } else {
@@ -357,14 +360,13 @@ public static void listarPessoasFisicas(PessoaFisicaDAO pessoaFisicaDAO) {
 
     // Exibe os dados de uma pessoa jurídica com base no ID fornecido
     public static void exibirPessoaJuridicaPorID(Scanner scanner, PessoaJuridicaDAO pessoaJuridicaDAO) {
-        System.out.println("Digite o ID da pessoa Jurídica a ser exibida:");
-//        String idString = scanner.nextLine();
-//        System.out.println(idString);
-//        int id_Pessoa = Integer.parseInt(idString);
-            int id_Pessoa = scanner.nextInt();
+        System.out.println("Digite o ID da pessoa Jurídica para exibição:");
+        int id_Pessoa = scanner.nextInt();
+        scanner.nextLine(); // Limpar o buffer do scanner
         
         PessoaJuridica pessoaJuridica = pessoaJuridicaDAO.getPessoaJuridicaById(id_Pessoa);
         if (pessoaJuridica != null) {
+            System.out.println("====================================");
             pessoaJuridica.exibir();
         } else {
             System.out.println("Pessoa Jurídica não encontrada com o ID informado.");
