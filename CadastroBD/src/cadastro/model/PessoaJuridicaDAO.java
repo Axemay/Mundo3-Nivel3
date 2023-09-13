@@ -66,31 +66,36 @@ public class PessoaJuridicaDAO {
         ResultSet resultSet = null;
 
         try {
-            connection = conectorBD.getConnection();
+             connection = conectorBD.getConnection();
             
-            // Consultar a tabela PessoaJuridica
-            String sql = "SELECT * FROM PessoaJuridica";
+            // Consultar a tabela Pessoa
+            String sql = "SELECT * FROM Pessoa RIGHT JOIN PessoaJuridica ON Pessoa.idPessoa = PessoaJuridica.idPessoa";
             statement = connection.prepareStatement(sql);
             resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                PessoaJuridica pessoaJuridica = new PessoaJuridica();
-                pessoaJuridica.setId(resultSet.getInt("idPessoa"));
-                pessoaJuridica.setNome(resultSet.getString("nome"));
-                pessoaJuridica.setCnpj(resultSet.getString("CNPJ"));
-                // Definir outros atributos específicos da tabela PessoaJuridica, se houver
-                pessoasJuridicas.add(pessoaJuridica);
-            }
-        } catch (SQLException e) {
-            // Tratar exceção, se necessário
-        } finally {
-            conectorBD.close(resultSet);
-            conectorBD.close(statement);
-            conectorBD.close(connection);
+            PessoaJuridica pessoaJuridica = new PessoaJuridica();
+            pessoaJuridica.setId(resultSet.getInt("idPessoa"));
+            pessoaJuridica.setNome(resultSet.getString("nome"));
+            pessoaJuridica.setLogradouro(resultSet.getString("logradouro"));
+            pessoaJuridica.setCidade(resultSet.getString("cidade"));
+            pessoaJuridica.setEstado(resultSet.getString("estado"));
+            pessoaJuridica.setTelefone(resultSet.getString("telefone"));
+            pessoaJuridica.setEmail(resultSet.getString("email"));
+            pessoaJuridica.setCnpj(resultSet.getString("CNPJ"));
+            
+            pessoasJuridicas.add(pessoaJuridica);
         }
-
-        return pessoasJuridicas;
+    } catch (SQLException e) {
+         System.out.println("Erro do tipo: "+e);
+    } finally {
+        conectorBD.close(resultSet);
+        conectorBD.close(statement);
+        conectorBD.close(connection);
     }
+
+    return pessoasJuridicas;
+}
     
     // Método para incluir uma PessoaJuridica no banco de dados
     public void incluirPessoaJuridica(PessoaJuridica pessoaJuridica) {
@@ -101,6 +106,23 @@ public class PessoaJuridicaDAO {
             connection = conectorBD.getConnection();
             connection.setAutoCommit(false); // Inicia uma transação
 
+                           // Inserir na tabela Pessoa
+        String sqlPessoa = "INSERT INTO Pessoa (nome, logradouro, cidade, estado, telefone, email) VALUES (?, ?, ?, ?, ?, ?)";
+        statement = connection.prepareStatement(sqlPessoa, Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, pessoaJuridica.getNome());
+        statement.setString(2, pessoaJuridica.getLogradouro());
+        statement.setString(3, pessoaJuridica.getCidade());
+        statement.setString(4, pessoaJuridica.getEstado());
+        statement.setString(5, pessoaJuridica.getTelefone());
+        statement.setString(6, pessoaJuridica.getEmail());
+        statement.executeUpdate();
+
+        // Obter o ID gerado para a Pessoa
+        ResultSet generatedKeys = statement.getGeneratedKeys();
+        int idPessoa;
+        if (generatedKeys.next()) {
+            idPessoa = generatedKeys.getInt(1);
+        }
             // Inserir na tabela PessoaJuridica
             String sql = "INSERT INTO PessoaJuridica (nome, CNPJ) VALUES (?, ?)";
             statement = connection.prepareStatement(sql);
@@ -174,17 +196,24 @@ public PessoaJuridica getPessoaJuridicaById(int id) {
         connection = conectorBD.getConnection();
         
         // Consultar a tabela PessoaJuridica
-        String sql = "SELECT * FROM PessoaJuridica WHERE idPessoa = ?";
+        String sql = "SELECT * FROM Pessoa RIGHT JOIN PessoaJuridica ON Pessoa.idPessoa = PessoaJuridica.idPessoa WHERE Pessoa.idPessoa = ?";
         statement = connection.prepareStatement(sql);
         statement.setInt(1, id);
         resultSet = statement.executeQuery();
 
         if (resultSet.next()) {
+
             pessoaJuridica = new PessoaJuridica();
             pessoaJuridica.setId(resultSet.getInt("idPessoa"));
             pessoaJuridica.setNome(resultSet.getString("nome"));
+            pessoaJuridica.setLogradouro(resultSet.getString("logradouro"));
+            pessoaJuridica.setCidade(resultSet.getString("cidade"));
+            pessoaJuridica.setEstado(resultSet.getString("estado"));
+            pessoaJuridica.setTelefone(resultSet.getString("telefone"));
+            pessoaJuridica.setEmail(resultSet.getString("email"));
             pessoaJuridica.setCnpj(resultSet.getString("CNPJ"));
-            // Definir outros atributos específicos da tabela PessoaJuridica, se houver
+            
+            
         }
     } catch (SQLException e) {
         // Tratar exceção, se necessário

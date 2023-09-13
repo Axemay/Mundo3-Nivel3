@@ -23,7 +23,7 @@ public class CadastroBDTeste {
 
             boolean continuar = true;
             while (continuar) {
-                CadastroBDService.exibirOpcoes();
+                CadastroBDService.exibirMenu();
 
                 String opcao = CadastroBDService.lerOpcao(scanner);
 
@@ -55,9 +55,10 @@ public class CadastroBDTeste {
                     
                     case "0": 
                         continuar = false;
-                        break;
+                    break;
                     
                     default: System.out.println("Opção inválida. Tente novamente.");
+                    
                     }
             }
         }

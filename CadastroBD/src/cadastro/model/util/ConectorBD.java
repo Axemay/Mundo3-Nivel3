@@ -48,7 +48,7 @@ public class ConectorBD {
                 connection.close();
             }
         } catch (SQLException e) {
-            // Trate ou registre a exceção, se necessário
+           System.out.println(e);
         }
     }
 
@@ -58,7 +58,7 @@ public class ConectorBD {
                 statement.close();
             }
         } catch (SQLException e) {
-            // Trate ou registre a exceção, se necessário
+            System.out.println(e);
         }
     }
 
@@ -68,11 +68,11 @@ public class ConectorBD {
                 resultSet.close();
             }
         } catch (SQLException e) {
-            // Trate ou registre a exceção, se necessário
+            System.out.println(e);
         }
     }
 
     Statement getStatement() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 }

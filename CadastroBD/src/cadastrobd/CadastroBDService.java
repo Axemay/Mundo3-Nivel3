@@ -19,16 +19,17 @@ import java.util.Scanner;
 public class CadastroBDService {
     
     // Exibe as opções do programa
-    public static void exibirOpcoes() {
-        System.out.println("\nOpcoes do programa:");
-        System.out.println("==============================");
-        System.out.println("1 - Incluir Pessoa");
-        System.out.println("2 - Alterar Pessoa");
-        System.out.println("3 - Excluir Pessoa");
-        System.out.println("4 - Buscar pelo Id");
-        System.out.println("5 - Exibir todos");
-        System.out.println("0 - Finalizar Programa");
-        System.out.println("==============================");
+    public static void exibirMenu() {
+        String menu = "====================================" +
+                "\n1 - Incluir Pessoa" +
+                "\n2 - Alterar Pessoa" +
+                "\n3 - Excluir Pessoa" +
+                "\n4 - Buscar pelo ID" +
+                "\n5 - Exibir todos" +
+                "\n0 - Finalizar programa" +
+                "\n====================================\n";
+          System.out.println(menu);
+        
     }
 
      // Lê a opção escolhida pelo usuário
@@ -42,7 +43,7 @@ public class CadastroBDService {
                 opcaoValida = true;
             } catch (InputMismatchException e) {
                 System.out.println("Opcao invalida. Digite um numero valido.");
-                scanner.nextLine(); // Limpar o buffer do scanner
+//                scanner.nextLine(); // Limpar o buffer do scanner
             }
         }
         return opcao;
@@ -124,14 +125,16 @@ public class CadastroBDService {
         System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 
         for (PessoaFisica pessoaFisica : pessoasFisicas) {
-            System.out.println(pessoaFisica.toString());
+            pessoaFisica.exibir();
+            System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
         }
     } else if (tipoListagem.equalsIgnoreCase("J")) {
         List<PessoaJuridica> pessoasJuridicas = pessoaJuridicaDAO.listarTodasPessoasJuridicas();
                 System.out.println("Lista de Pessoas Jurídicas");
         System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
         for (PessoaJuridica pessoaJuridica : pessoasJuridicas) {
-            System.out.println(pessoaJuridica.toString());
+            pessoaJuridica.exibir();
+            System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         }
     }
 }
@@ -345,7 +348,8 @@ public static void listarPessoasFisicas(PessoaFisicaDAO pessoaFisicaDAO) {
 
         PessoaFisica pessoaFisica = pessoaFisicaDAO.getPessoaFisicaById(id_Pessoa);
         if (pessoaFisica != null) {
-            System.out.println(pessoaFisica); // Exibir os dados da pessoa física
+            pessoaFisica.exibir();
+            
         } else {
             System.out.println("Pessoa Física não encontrada com o ID informado.");
         }
@@ -354,12 +358,14 @@ public static void listarPessoasFisicas(PessoaFisicaDAO pessoaFisicaDAO) {
     // Exibe os dados de uma pessoa jurídica com base no ID fornecido
     public static void exibirPessoaJuridicaPorID(Scanner scanner, PessoaJuridicaDAO pessoaJuridicaDAO) {
         System.out.println("Digite o ID da pessoa Jurídica a ser exibida:");
-        int id_Pessoa = scanner.nextInt();
-        scanner.nextLine(); // Limpar o buffer do scanner
-
+//        String idString = scanner.nextLine();
+//        System.out.println(idString);
+//        int id_Pessoa = Integer.parseInt(idString);
+            int id_Pessoa = scanner.nextInt();
+        
         PessoaJuridica pessoaJuridica = pessoaJuridicaDAO.getPessoaJuridicaById(id_Pessoa);
         if (pessoaJuridica != null) {
-            System.out.println(pessoaJuridica); // Exibir os dados da pessoa jurídica
+            pessoaJuridica.exibir();
         } else {
             System.out.println("Pessoa Jurídica não encontrada com o ID informado.");
         }
@@ -376,7 +382,7 @@ public static int selecionarIdPessoa(Scanner scanner) {
             idValido = true;
         } catch (InputMismatchException e) {
             System.out.println("ID inválido. Digite um número válido.");
-            scanner.nextLine(); // Limpar o buffer do scanner
+            //scanner.nextLine(); // Limpar o buffer do scanner
         }
     }
     return id;

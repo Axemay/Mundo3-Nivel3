@@ -26,7 +26,7 @@ public class PessoaFisicaDAO {
 
     
     public PessoaFisica getPessoaFisica(int id) {
-          PessoaFisica pessoaFisica = null;
+        PessoaFisica pessoaFisica = null;
         Connection connection = null;
         PreparedStatement statementPessoa = null;
         PreparedStatement statementPessoaFisica = null;
@@ -37,6 +37,8 @@ public class PessoaFisicaDAO {
             connection = conectorBD.getConnection();
             
             String sqlPessoa = "SELECT * FROM Pessoa WHERE idPessoa = ?";
+
+            
             statementPessoa = connection.prepareStatement(sqlPessoa);
             statementPessoa.setInt(1, id);
             resultSetPessoa = statementPessoa.executeQuery();
@@ -61,9 +63,9 @@ public class PessoaFisicaDAO {
             if (resultSetPessoaFisica.next()) {
                 pessoaFisica.setCpf(resultSetPessoaFisica.getString("CPF"));
             }
-
+            statementPessoaFisica.execute();
         } catch (SQLException e) {
-            // Tratar exceção, se necessário
+            System.out.println("Erro. Não foi possível concluir a solicitação");
         } finally {
             conectorBD.close(resultSetPessoaFisica);
             conectorBD.close(statementPessoaFisica);
@@ -108,38 +110,43 @@ public class PessoaFisicaDAO {
 //    }
     
     // Método para listar todas as pessoas físicas
-    public List<PessoaFisica> listarTodasPessoasFisicas() {
+     public List<PessoaFisica> listarTodasPessoasFisicas() {
         List<PessoaFisica> pessoasFisicas = new ArrayList<>();
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
 
         try {
-            connection = conectorBD.getConnection();
+             connection = conectorBD.getConnection();
             
-            // Consultar a tabela PessoaFisica
-            String sql = "SELECT * FROM PessoaFisica";
+            // Consultar a tabela Pessoa
+            String sql = "SELECT * FROM Pessoa RIGHT JOIN PessoaFisica ON Pessoa.idPessoa = PessoaFisica.idPessoa";
             statement = connection.prepareStatement(sql);
             resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                PessoaFisica pessoaFisica = new PessoaFisica();
-                pessoaFisica.setId(resultSet.getInt("idPessoa"));
-                pessoaFisica.setNome(resultSet.getString("nome"));
-                pessoaFisica.setCpf(resultSet.getString("CPF"));
-                // Definir outros atributos específicos da tabela PessoaFisica, se houver
-                pessoasFisicas.add(pessoaFisica);
-            }
-        } catch (SQLException e) {
-            // Tratar exceção, se necessário
-        } finally {
-            conectorBD.close(resultSet);
-            conectorBD.close(statement);
-            conectorBD.close(connection);
+            PessoaFisica pessoaFisica = new PessoaFisica();
+            pessoaFisica.setId(resultSet.getInt("idPessoa"));
+            pessoaFisica.setNome(resultSet.getString("nome"));
+            pessoaFisica.setLogradouro(resultSet.getString("logradouro"));
+            pessoaFisica.setCidade(resultSet.getString("cidade"));
+            pessoaFisica.setEstado(resultSet.getString("estado"));
+            pessoaFisica.setTelefone(resultSet.getString("telefone"));
+            pessoaFisica.setEmail(resultSet.getString("email"));
+            pessoaFisica.setCpf(resultSet.getString("CPF"));
+            
+            pessoasFisicas.add(pessoaFisica);
         }
-
-        return pessoasFisicas;
+    } catch (SQLException e) {
+        // Tratar exceção, se necessário
+    } finally {
+        conectorBD.close(resultSet);
+        conectorBD.close(statement);
+        conectorBD.close(connection);
     }
+
+    return pessoasFisicas;
+}
     
     // Método para incluir uma PessoaFisica no banco de dados
     public void incluirPessoaFisica(PessoaFisica pessoaFisica) {
@@ -150,6 +157,23 @@ public class PessoaFisicaDAO {
             connection = conectorBD.getConnection();
             connection.setAutoCommit(false); // Inicia uma transação
 
+                    // Inserir na tabela Pessoa
+        String sqlPessoa = "INSERT INTO Pessoa (nome, logradouro, cidade, estado, telefone, email) VALUES (?, ?, ?, ?, ?, ?)";
+        statement = connection.prepareStatement(sqlPessoa, Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, pessoaFisica.getNome());
+        statement.setString(2, pessoaFisica.getLogradouro());
+        statement.setString(3, pessoaFisica.getCidade());
+        statement.setString(4, pessoaFisica.getEstado());
+        statement.setString(5, pessoaFisica.getTelefone());
+        statement.setString(6, pessoaFisica.getEmail());
+        statement.executeUpdate();
+
+        // Obter o ID gerado para a Pessoa
+        ResultSet generatedKeys = statement.getGeneratedKeys();
+        int idPessoa;
+        if (generatedKeys.next()) {
+            idPessoa = generatedKeys.getInt(1);
+        }
             // Inserir na tabela PessoaFisica
             String sql = "INSERT INTO PessoaFisica (nome, CPF) VALUES (?, ?)";
             statement = connection.prepareStatement(sql);
@@ -222,20 +246,26 @@ public class PessoaFisicaDAO {
         connection = conectorBD.getConnection();
         
         // Consultar a tabela PessoaFisica
-        String sql = "SELECT * FROM PessoaFisica WHERE idPessoa = ?";
+        String sql = "SELECT * FROM Pessoa RIGHT JOIN PessoaFisica ON Pessoa.idPessoa = PessoaFisica.idPessoa WHERE Pessoa.idPessoa = ?";
         statement = connection.prepareStatement(sql);
         statement.setInt(1, id);
         resultSet = statement.executeQuery();
 
         if (resultSet.next()) {
+
             pessoaFisica = new PessoaFisica();
             pessoaFisica.setId(resultSet.getInt("idPessoa"));
             pessoaFisica.setNome(resultSet.getString("nome"));
+            pessoaFisica.setLogradouro(resultSet.getString("logradouro"));
+            pessoaFisica.setCidade(resultSet.getString("cidade"));
+            pessoaFisica.setEstado(resultSet.getString("estado"));
+            pessoaFisica.setTelefone(resultSet.getString("telefone"));
+            pessoaFisica.setEmail(resultSet.getString("email"));
             pessoaFisica.setCpf(resultSet.getString("CPF"));
-            // Definir outros atributos específicos da tabela PessoaFisica, se houver
+            
         }
     } catch (SQLException e) {
-        // Tratar exceção, se necessário
+        System.out.println(e);
     } finally {
         conectorBD.close(resultSet);
         conectorBD.close(statement);
