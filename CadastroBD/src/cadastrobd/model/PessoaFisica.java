@@ -28,7 +28,6 @@ public class PessoaFisica extends Pessoa implements Serializable {
         this.cpf = cpf;
     }
 
- 
 
     @Override
     public void exibir(){

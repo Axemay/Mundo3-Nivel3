@@ -41,8 +41,6 @@ public class Pessoa implements Serializable {
         return cidade;
     }
 
-
-
     public String getEstado() {
         return estado;
     }
