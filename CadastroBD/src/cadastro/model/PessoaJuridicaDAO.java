@@ -156,8 +156,8 @@ public class PessoaJuridicaDAO {
         connection.setAutoCommit(false);
 
 
-        String sqlVerificarExistenciaPessoa = "SELECT idPessoa FROM Pessoa WHERE idPessoa = ?";
-        preparedStatement = connection.prepareStatement(sqlVerificarExistenciaPessoa);
+        String sqlConsulta = "SELECT idPessoa FROM Pessoa WHERE idPessoa = ?";
+        preparedStatement = connection.prepareStatement(sqlConsulta);
         preparedStatement.setInt(1, pessoaJuridicaAntiga.getId());
         ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -175,8 +175,8 @@ public class PessoaJuridicaDAO {
 
             preparedStatement.executeUpdate();
 
-            String sqlVerificarExistencia = "SELECT idPessoa FROM PessoaJuridica WHERE idPessoa = ?";
-            preparedStatement = connection.prepareStatement(sqlVerificarExistencia);
+            String sqlConsultaPJ = "SELECT idPessoa FROM PessoaJuridica WHERE idPessoa = ?";
+            preparedStatement = connection.prepareStatement(sqlConsultaPJ);
             preparedStatement.setInt(1, pessoaJuridicaAntiga.getId());
             resultSet = preparedStatement.executeQuery();
 
@@ -252,42 +252,65 @@ public PessoaJuridica getPessoaJuridicaById(int id) {
     return pessoaJuridica;
 }
 
-    
+        
     public void excluirPessoaJuridica(int id) {
-        Connection connection = null;
-        PreparedStatement statement = null;
+    Connection connection = null;
+    PreparedStatement preparedStatement = null;
 
-        try {
-            connection = conectorBD.getConnection();
-            connection.setAutoCommit(false); 
+    try {
+        connection = conectorBD.getConnection();
+        connection.setAutoCommit(false);
 
-            String sqlVerificarExistencia = "SELECT idPessoa FROM PessoaJuridica WHERE idPessoa = ?";
-            statement = connection.prepareStatement(sqlVerificarExistencia);
-            statement.setInt(1, id);
-            ResultSet resultSet = statement.executeQuery();
+        String sqlConsultaPJ = "SELECT idPessoa FROM PessoaJuridica WHERE idPessoa = ?";
+        preparedStatement = connection.prepareStatement(sqlConsultaPJ);
+        preparedStatement.setInt(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        if (resultSet.next()) {
+            String sqlDeletaPJ = "DELETE FROM PessoaJuridica WHERE idPessoa = ?";
+            preparedStatement = connection.prepareStatement(sqlDeletaPJ);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+
+            String sqlConsultaPessoa = "SELECT idPessoa FROM Pessoa WHERE idPessoa = ?";
+            preparedStatement = connection.prepareStatement(sqlConsultaPessoa);
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                String sql = "DELETE FROM PessoaJuridica WHERE idPessoa = ?";
-                statement = connection.prepareStatement(sql);
-                statement.setInt(1, id);
-                statement.executeUpdate();
+                String sqlPessoa = "DELETE FROM Pessoa WHERE idPessoa = ?";
+                preparedStatement = connection.prepareStatement(sqlPessoa);
+                preparedStatement.setInt(1, id);
+                preparedStatement.executeUpdate();
 
-                connection.commit(); 
-                System.out.println("Pessoa jurídica excluída com sucesso.");
-            } else {
-                System.out.println("ID não encontrado para a Pessoa Jurídica.");
-            }
-        } catch (SQLException e) {
-            if (connection != null) {
                 try {
-                    connection.rollback(); 
-                } catch (SQLException ex) {
-                    System.out.println("Erro. Não foi possível concluir a solicitação "+e);
+                    connection.commit();
+                    System.out.println("Commit realizado");
+                } catch (SQLException e) {
+                    System.out.println("Erro no commit");
                 }
+
+            } else {
+                System.out.println("ID não encontrado para Pessoa na base de dados.");
             }
-        } finally {
-            conectorBD.close(statement);
-            conectorBD.close(connection);
+        } else {
+            System.out.println("ID não encontrado para Pessoa Jurídica na base de dados.");
         }
+    } catch (SQLException e) {
+        System.out.println("Erro. Não foi possível concluir a solicitação: " + e);
+        System.out.println("Código de Erro SQL: " + e.getErrorCode());
+
+        if (connection != null) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                System.out.println("Erro ao fazer rollback: " + ex);
+            }
+        }
+    } finally {
+        conectorBD.close(preparedStatement);
+        conectorBD.close(connection);
     }
+}
+    
 }

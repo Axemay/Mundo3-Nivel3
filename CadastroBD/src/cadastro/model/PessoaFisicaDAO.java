@@ -163,72 +163,70 @@ public class PessoaFisicaDAO {
     }
 
     public void alterarPessoaFisica(PessoaFisica pessoaFisicaAntiga, PessoaFisica pessoaFisicaNova) {
-    Connection connection = null;
-    PreparedStatement preparedStatement = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
 
-    try {
-        connection = conectorBD.getConnection();
-        connection.setAutoCommit(false);
+        try {
+            connection = conectorBD.getConnection();
+            connection.setAutoCommit(false);
 
-
-        String sqlVerificarExistenciaPessoa = "SELECT idPessoa FROM Pessoa WHERE idPessoa = ?";
-        preparedStatement = connection.prepareStatement(sqlVerificarExistenciaPessoa);
-        preparedStatement.setInt(1, pessoaFisicaAntiga.getId());
-        ResultSet resultSet = preparedStatement.executeQuery();
-
-        if (resultSet.next()) {
-
-            String sqlPessoa = "UPDATE Pessoa SET nome = ?, logradouro = ?, cidade = ?, estado = ?, email = ?, telefone = ? WHERE idPessoa = ?";
-            preparedStatement = connection.prepareStatement(sqlPessoa);
-            preparedStatement.setString(1, pessoaFisicaNova.getNome());
-            preparedStatement.setString(2, pessoaFisicaNova.getLogradouro());
-            preparedStatement.setString(3, pessoaFisicaNova.getCidade());
-            preparedStatement.setString(4, pessoaFisicaNova.getEstado());
-            preparedStatement.setString(5, pessoaFisicaNova.getEmail());
-            preparedStatement.setString(6, pessoaFisicaNova.getTelefone());
-            preparedStatement.setInt(7, pessoaFisicaAntiga.getId()); // 
-
-            preparedStatement.executeUpdate();
-
-            String sqlVerificarExistencia = "SELECT idPessoa FROM PessoaFisica WHERE idPessoa = ?";
-            preparedStatement = connection.prepareStatement(sqlVerificarExistencia);
+            String sqlConsulta = "SELECT idPessoa FROM Pessoa WHERE idPessoa = ?";
+            preparedStatement = connection.prepareStatement(sqlConsulta);
             preparedStatement.setInt(1, pessoaFisicaAntiga.getId());
-            resultSet = preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                String sqlPessoaFisica = "UPDATE PessoaFisica SET CPF = ? WHERE idPessoa = ?";
-                preparedStatement = connection.prepareStatement(sqlPessoaFisica);
-                preparedStatement.setString(1, pessoaFisicaNova.getCpf());
-                preparedStatement.setInt(2, pessoaFisicaAntiga.getId()); 
+
+                String sqlPessoa = "UPDATE Pessoa SET nome = ?, logradouro = ?, cidade = ?, estado = ?, email = ?, telefone = ? WHERE idPessoa = ?";
+                preparedStatement = connection.prepareStatement(sqlPessoa);
+                preparedStatement.setString(1, pessoaFisicaNova.getNome());
+                preparedStatement.setString(2, pessoaFisicaNova.getLogradouro());
+                preparedStatement.setString(3, pessoaFisicaNova.getCidade());
+                preparedStatement.setString(4, pessoaFisicaNova.getEstado());
+                preparedStatement.setString(5, pessoaFisicaNova.getEmail());
+                preparedStatement.setString(6, pessoaFisicaNova.getTelefone());
+                preparedStatement.setInt(7, pessoaFisicaAntiga.getId()); // 
 
                 preparedStatement.executeUpdate();
 
-                try {
-                    connection.commit();
-                } catch (SQLException e) {
-                    System.out.println("Erro no commit");
+                String sqlConsultaPF = "SELECT idPessoa FROM PessoaFisica WHERE idPessoa = ?";
+                preparedStatement = connection.prepareStatement(sqlConsultaPF);
+                preparedStatement.setInt(1, pessoaFisicaAntiga.getId());
+                resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    String sqlPessoaFisica = "UPDATE PessoaFisica SET CPF = ? WHERE idPessoa = ?";
+                    preparedStatement = connection.prepareStatement(sqlPessoaFisica);
+                    preparedStatement.setString(1, pessoaFisicaNova.getCpf());
+                    preparedStatement.setInt(2, pessoaFisicaAntiga.getId());
+
+                    preparedStatement.executeUpdate();
+
+                    try {
+                        connection.commit();
+                    } catch (SQLException e) {
+                        System.out.println("Erro no commit");
+                    }
+                } else {
+                    System.out.println("ID não encontrado para Pessoa Física na base de dados.");
                 }
             } else {
-                System.out.println("ID não encontrado para Pessoa Física na base de dados.");
+                System.out.println("ID não encontrado para Pessoa na base de dados.");
             }
-        } else {
-            System.out.println("ID não encontrado para Pessoa na base de dados.");
-        }
-    } catch (SQLException e) {
-        if (connection != null) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                System.out.println("Erro. Não foi possível concluir a solicitação: " + e);
+        } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    System.out.println("Erro. Não foi possível concluir a solicitação: " + e);
+                    System.out.println("Código de Erro SQL: " + e.getErrorCode());
+                }
             }
+        } finally {
+            conectorBD.close(preparedStatement);
+            conectorBD.close(connection);
         }
-    } finally {
-        conectorBD.close(preparedStatement);
-        conectorBD.close(connection);
     }
-}
-
-  
 
     // Opção 4 do Menu
     public PessoaFisica getPessoaFisicaById(int id) {
@@ -260,6 +258,7 @@ public class PessoaFisicaDAO {
             }
         } catch (SQLException e) {
             System.out.println(e);
+            System.out.println("Código de Erro SQL: " + e.getErrorCode());
         } finally {
             conectorBD.close(resultSet);
             conectorBD.close(statement);
@@ -269,109 +268,66 @@ public class PessoaFisicaDAO {
         return pessoaFisica;
     }
 
+
+    
     public void excluirPessoaFisica(int id) {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        try {
+    Connection connection = null;
+    PreparedStatement preparedStatement = null;
+
+    try {
         connection = conectorBD.getConnection();
         connection.setAutoCommit(false);
 
-
-        String sqlVerificarExistenciaPessoa = "SELECT idPessoa FROM PessoaFisica WHERE idPessoa = ?";
-        preparedStatement = connection.prepareStatement(sqlVerificarExistenciaPessoa);
+        String sqlConsultaPF = "SELECT idPessoa FROM PessoaFisica WHERE idPessoa = ?";
+        preparedStatement = connection.prepareStatement(sqlConsultaPF);
+        preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
 
         if (resultSet.next()) {
-
-            String sqlPessoa = "DELETE FROM PessoaFisica WHERE idPessoa = ?";
-            preparedStatement = connection.prepareStatement(sqlPessoa);
+            String sqlDeletaPF = "DELETE FROM PessoaFisica WHERE idPessoa = ?";
+            preparedStatement = connection.prepareStatement(sqlDeletaPF);
             preparedStatement.setInt(1, id);
-
-
             preparedStatement.executeUpdate();
 
-            String sqlVerificarExistencia = "SELECT idPessoa FROM Pessoa WHERE idPessoa = ?";
-            preparedStatement = connection.prepareStatement(sqlVerificarExistencia);
+            String sqlConsultaPessoa = "SELECT idPessoa FROM Pessoa WHERE idPessoa = ?";
+            preparedStatement = connection.prepareStatement(sqlConsultaPessoa);
+            preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                String sqlPessoaFisica = "DELETE FROM Pessoa WHERE idPessoa = ?";
-                preparedStatement = connection.prepareStatement(sqlPessoaFisica);
+                String sqlPessoa = "DELETE FROM Pessoa WHERE idPessoa = ?";
+                preparedStatement = connection.prepareStatement(sqlPessoa);
                 preparedStatement.setInt(1, id);
-
                 preparedStatement.executeUpdate();
 
                 try {
                     connection.commit();
+                    System.out.println("Commit realizado");
                 } catch (SQLException e) {
                     System.out.println("Erro no commit");
                 }
+
             } else {
-                System.out.println("ID não encontrado para Pessoa Física na base de dados.");
+                System.out.println("ID não encontrado para Pessoa na base de dados.");
             }
         } else {
-            System.out.println("ID não encontrado para Pessoa na base de dados.");
+            System.out.println("ID não encontrado para Pessoa Física na base de dados.");
         }
     } catch (SQLException e) {
+        System.out.println("Erro. Não foi possível concluir a solicitação: " + e);
+        System.out.println("Código de Erro SQL: " + e.getErrorCode());
+
         if (connection != null) {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                System.out.println("Erro. Não foi possível concluir a solicitação: " + e);
+                System.out.println("Erro ao fazer rollback: " + ex);
             }
         }
     } finally {
         conectorBD.close(preparedStatement);
         conectorBD.close(connection);
     }
-
-//        try {
-//            connection = conectorBD.getConnection();
-//            connection.setAutoCommit(false);
-//
-//            String sqlVerificarExistencia = "SELECT idPessoa FROM PessoaFisica WHERE idPessoa = ?";
-//            preparedStatement = connection.prepareStatement(sqlVerificarExistencia);
-//            preparedStatement.setInt(1, id);
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//
-//            if (resultSet.next()) {
-//
-//                String sql = "DELETE FROM PessoaFisica WHERE idPessoa = ?";
-//                preparedStatement = connection.prepareStatement(sql);
-//                preparedStatement.setInt(1, id);
-//                preparedStatement.executeUpdate();
-//
-//                String sqlVerificarExistenciaPessoa = "SELECT idPessoa FROM Pessoa WHERE idPessoa = ?";
-//                preparedStatement = connection.prepareStatement(sqlVerificarExistenciaPessoa);
-//                preparedStatement.setInt(1, id);
-//                resultSet = preparedStatement.executeQuery();
-//                } else {
-//                System.out.println("ID não encontrado para Pessoa Física.");
-//            }
-//            if (resultSet.next()) {
-//
-//                String sqlPessoa = "DELETE FROM Pessoa WHERE idPessoa = ?";
-//                preparedStatement = connection.prepareStatement(sqlPessoa);
-//                preparedStatement.setInt(1, id);
-//                preparedStatement.executeUpdate();
-//                
-//                connection.commit(); 
-//                
-//            } else {
-//                System.out.println("ID não encontrado para Pessoa Física.");
-//            }
-//        } catch (SQLException e) {
-//            if (connection != null) {
-//                try {
-//                    connection.rollback();
-//                } catch (SQLException ex) {
-//                    System.out.println("Erro. Não foi possível concluir a solicitação: " + e);
-//                }
-//            }
-//        } finally {
-//            conectorBD.close(statement);
-//            conectorBD.close(connection);
-//
-//        }
-    }
+}
+  
 }

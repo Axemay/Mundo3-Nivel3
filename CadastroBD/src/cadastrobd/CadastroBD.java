@@ -132,8 +132,10 @@ public class CadastroBD {
 
     public static void executarAlterar(Scanner scanner, PessoaFisicaDAO pessoaFisicaDAO, PessoaJuridicaDAO pessoaJuridicaDAO) {
         String tipoAlteracao = selecionarTipo(scanner);
+        
         if (tipoAlteracao.equalsIgnoreCase("F")) {
             alterarPessoaFisica(scanner, pessoaFisicaDAO);
+            
         } else if (tipoAlteracao.equalsIgnoreCase("J")) {
             alterarPessoaJuridica(scanner, pessoaJuridicaDAO);
         }
@@ -142,20 +144,26 @@ public class CadastroBD {
 
     public static void executarExcluir(Scanner scanner, PessoaFisicaDAO pessoaFisicaDAO, PessoaJuridicaDAO pessoaJuridicaDAO) {
         String tipoExclusao = selecionarTipo(scanner);
+        
+        
+        
+        
         if (tipoExclusao.equalsIgnoreCase("F")) {
-        int id_Pessoa = selecionarIdPessoa(scanner);
-        pessoaFisicaDAO.excluirPessoaFisica(id_Pessoa);
-        System.out.println("Pessoa física excluida com sucesso.");
-
-
-        executarListar(scanner, pessoaFisicaDAO, pessoaJuridicaDAO);
-    } else if (tipoExclusao.equalsIgnoreCase("J")) {
-        int id_Pessoa = selecionarIdPessoa(scanner);
-        pessoaJuridicaDAO.excluirPessoaJuridica(id_Pessoa);
-        System.out.println("Pessoa jurídica excluida com sucesso.");
-
-        executarListar(scanner, pessoaFisicaDAO, pessoaJuridicaDAO);
-    }
+            System.out.print("Digite o ID da pessoa física para exclusão: ");
+        int id_Pessoa = scanner.nextInt();
+            pessoaFisicaDAO.excluirPessoaFisica(id_Pessoa);
+            System.out.println("Pessoa física excluida com sucesso.");
+            
+        
+        
+        } else if (tipoExclusao.equalsIgnoreCase("J")) {
+            System.out.print("Digite o ID da pessoa jurídica para exclusão: ");
+            int id_Pessoa = scanner.nextInt();
+            pessoaJuridicaDAO.excluirPessoaJuridica(id_Pessoa);
+            System.out.println("Pessoa jurídica excluida com sucesso.");
+            
+        }
+        scanner.nextLine();
 }
 
 
@@ -416,21 +424,21 @@ public static void listarPessoasFisicas(PessoaFisicaDAO pessoaFisicaDAO) {
         }
     }
     
-public static int selecionarIdPessoa(Scanner scanner) {
-    int id = 0;
-    boolean idValido = false;
-    while (!idValido) {
-        try {
-            System.out.print("Digite o ID da pessoa: ");
-            id = scanner.nextInt();
-            idValido = true;
-        } catch (InputMismatchException e) {
-            System.out.println("ID inválido. Insira um ID válido.");
-
-        }
-    }
-    return id;
-}
+//public static int selecionarIdPessoa(Scanner scanner) {
+//    int id = 0;
+//    boolean idValido = false;
+//    while (!idValido) {
+//        try {
+//            System.out.print("Digite o ID da pessoa: ");
+//            id = scanner.nextInt();
+//            idValido = true;
+//        } catch (InputMismatchException e) {
+//            System.out.println("ID inválido. Insira um ID válido.");
+//
+//        }
+//    }
+//    return id;
+//}
 
 }
 
