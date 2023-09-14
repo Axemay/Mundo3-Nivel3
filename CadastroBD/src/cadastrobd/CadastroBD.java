@@ -332,7 +332,7 @@ public class CadastroBD {
         PessoaJuridica pessoaJuridicaAntiga = pessoaJuridicaDAO.getPessoaJuridica(id);
         if (pessoaJuridicaAntiga != null) {
             System.out.println("Pessoa jurídica encontrada:");
-            pessoaJuridica.exibir();
+            pessoaJuridicaAntiga.exibir();
 
             scanner.nextLine(); 
 
@@ -424,6 +424,10 @@ public static void listarPessoasFisicas(PessoaFisicaDAO pessoaFisicaDAO) {
         }
     }
     
+
+
+}
+
 //public static int selecionarIdPessoa(Scanner scanner) {
 //    int id = 0;
 //    boolean idValido = false;
@@ -439,6 +443,3 @@ public static void listarPessoasFisicas(PessoaFisicaDAO pessoaFisicaDAO) {
 //    }
 //    return id;
 //}
-
-}
-

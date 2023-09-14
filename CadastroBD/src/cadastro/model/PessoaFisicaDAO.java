@@ -268,7 +268,6 @@ public class PessoaFisicaDAO {
         return pessoaFisica;
     }
 
-
     
     public void excluirPessoaFisica(int id) {
     Connection connection = null;
@@ -328,6 +327,5 @@ public class PessoaFisicaDAO {
         conectorBD.close(preparedStatement);
         conectorBD.close(connection);
     }
-}
-  
+}  
 }

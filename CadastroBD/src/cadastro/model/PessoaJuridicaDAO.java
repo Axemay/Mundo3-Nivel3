@@ -25,38 +25,88 @@ public class PessoaJuridicaDAO {
         this.conectorBD = new ConectorBD();
     }
 
-
     public PessoaJuridica getPessoaJuridica(int id) {
         PessoaJuridica pessoaJuridica = null;
         Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
+        PreparedStatement statementPessoa = null;
+        PreparedStatement statementPessoaJuridica = null;
+        ResultSet resultSetPessoa = null;
+        ResultSet resultSetPessoaJuridica = null;
 
         try {
             connection = conectorBD.getConnection();
-            
-            String sql = "SELECT * FROM PessoaJuridica WHERE idPessoa = ?";
-            statement = connection.prepareStatement(sql);
-            statement.setInt(1, id);
-            resultSet = statement.executeQuery();
 
-            if (resultSet.next()) {
+            String sqlPessoa = "SELECT * FROM Pessoa WHERE idPessoa = ?";
+
+            statementPessoa = connection.prepareStatement(sqlPessoa);
+            statementPessoa.setInt(1, id);
+            resultSetPessoa = statementPessoa.executeQuery();
+
+            if (resultSetPessoa.next()) {
                 pessoaJuridica = new PessoaJuridica();
-                pessoaJuridica.setId(resultSet.getInt("idPessoa"));
-                pessoaJuridica.setNome(resultSet.getString("nome"));
-                pessoaJuridica.setCnpj(resultSet.getString("CNPJ"));
+                pessoaJuridica.setId(resultSetPessoa.getInt("idPessoa"));
+                pessoaJuridica.setNome(resultSetPessoa.getString("nome"));
+                pessoaJuridica.setLogradouro(resultSetPessoa.getString("logradouro"));
+                pessoaJuridica.setCidade(resultSetPessoa.getString("cidade"));
+                pessoaJuridica.setEstado(resultSetPessoa.getString("estado"));
+                pessoaJuridica.setEmail(resultSetPessoa.getString("email"));
+                pessoaJuridica.setTelefone(resultSetPessoa.getString("telefone"));
 
             }
-        } catch (SQLException e) {
 
+            String sqlPessoaJuridica = "SELECT * FROM PessoaJuridica WHERE idPessoa = ?";
+            statementPessoaJuridica = connection.prepareStatement(sqlPessoaJuridica);
+            statementPessoaJuridica.setInt(1, id);
+            resultSetPessoaJuridica = statementPessoaJuridica.executeQuery();
+
+            if (resultSetPessoaJuridica.next()) {
+                pessoaJuridica.setCnpj(resultSetPessoaJuridica.getString("CNPJ"));
+            }
+            statementPessoaJuridica.execute();
+        } catch (SQLException e) {
+            System.out.println("Erro. Não foi possível concluir a solicitação " + e);
         } finally {
-            conectorBD.close(resultSet);
-            conectorBD.close(statement);
+            conectorBD.close(resultSetPessoaJuridica);
+            conectorBD.close(statementPessoaJuridica);
+            conectorBD.close(resultSetPessoa);
+            conectorBD.close(statementPessoa);
             conectorBD.close(connection);
         }
 
         return pessoaJuridica;
     }
+
+//    public PessoaJuridica getPessoaJuridica(int id) {
+//        PessoaJuridica pessoaJuridica = null;
+//        Connection connection = null;
+//        PreparedStatement statement = null;
+//        ResultSet resultSet = null;
+//
+//        try {
+//            connection = conectorBD.getConnection();
+//            
+//            String sql = "SELECT * FROM PessoaJuridica WHERE idPessoa = ?";
+//            statement = connection.prepareStatement(sql);
+//            statement.setInt(1, id);
+//            resultSet = statement.executeQuery();
+//
+//            if (resultSet.next()) {
+//                pessoaJuridica = new PessoaJuridica();
+//                pessoaJuridica.setId(resultSet.getInt("idPessoa"));
+//                pessoaJuridica.setNome(resultSet.getString("nome"));
+//                pessoaJuridica.setCnpj(resultSet.getString("CNPJ"));
+//
+//            }
+//        } catch (SQLException e) {
+//
+//        } finally {
+//            conectorBD.close(resultSet);
+//            conectorBD.close(statement);
+//            conectorBD.close(connection);
+//        }
+//
+//        return pessoaJuridica;
+//    }
     
     public List<PessoaJuridica> listarTodasPessoasJuridicas() {
         List<PessoaJuridica> pessoasJuridicas = new ArrayList<>();
@@ -120,7 +170,7 @@ public class PessoaJuridicaDAO {
 
         preparedStatement.execute();
 
-        String sql = "INSERT INTO PessoaFisica (idPessoa, CNPJ) VALUES (?, ?)";
+        String sql = "INSERT INTO PessoaJuridica (idPessoa, CNPJ) VALUES (?, ?)";
         preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setInt(1, idPessoa);
         preparedStatement.setString(2, pessoaJuridica.getCnpj());
@@ -171,7 +221,7 @@ public class PessoaJuridicaDAO {
             preparedStatement.setString(4, pessoaJuridicaNova.getEstado());
             preparedStatement.setString(5, pessoaJuridicaNova.getEmail());
             preparedStatement.setString(6, pessoaJuridicaNova.getTelefone());
-            preparedStatement.setInt(7, pessoaJuridicaNova.getId()); 
+            preparedStatement.setInt(7, pessoaJuridicaAntiga.getId()); 
 
             preparedStatement.executeUpdate();
 
@@ -181,8 +231,8 @@ public class PessoaJuridicaDAO {
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                String sqlPessoaFisica = "UPDATE PessoaJuridica SET CNPJ = ? WHERE idPessoa = ?";
-                preparedStatement = connection.prepareStatement(sqlPessoaFisica);
+                String sqlPessoaJuridica = "UPDATE PessoaJuridica SET CNPJ = ? WHERE idPessoa = ?";
+                preparedStatement = connection.prepareStatement(sqlPessoaJuridica);
                 preparedStatement.setString(1, pessoaJuridicaNova.getCnpj());
                 preparedStatement.setInt(2, pessoaJuridicaAntiga.getId()); 
 

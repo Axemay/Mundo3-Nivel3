@@ -71,8 +71,4 @@ public class ConectorBD {
             System.out.println(e);
         }
     }
-
-    Statement getStatement() {
-        throw new UnsupportedOperationException("Sem suporte!"); 
-    }
 }

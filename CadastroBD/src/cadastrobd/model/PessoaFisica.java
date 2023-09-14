@@ -34,7 +34,5 @@ public class PessoaFisica extends Pessoa implements Serializable {
         super.exibir();
         System.out.println("CPF: "+this.getCpf());
     }
-
-       
 }
 
